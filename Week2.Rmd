@@ -1,0 +1,70 @@
+---
+title: "Data Science CAP - week 2 - EDA"
+author: "P.Z"
+date: "2/21/2021"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Download and unzip data set
+
+The following lines of code are aimed to download and unzip the data set:
+
+```{r}
+temp <- tempfile()
+download.file("https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip",temp)
+data <- read.table(unz(temp, "Coursera-SwiftKey.zip"))
+unlink(temp)
+```
+
+## Load Packages
+The following lines of code will load the needed packages for processing the text files and performing exploratory data analysis.
+
+```{r}
+library(stringi)
+library(NLP)
+library(tm)
+library(RWeka)
+library(ggplot2)
+library(ggwordcloud)
+library(patchwork)
+```
+
+## Load data
+
+There are several data sets in the downloaded zip file but we will only focus on English language files: en_US.blogs.txt, en_US.news.txt, en_US.twitter.txt
+
+```{r}
+dtblog <- readLines("final/en_US/en_US.blogs.txt", warn = FALSE, encoding = "UTF-8")
+dtnews <- readLines("final/en_US/en_US.news.txt", warn = FALSE, encoding = "UTF-8")
+dttwitter <- readLines("final/en_US/en_US.twitter.txt", warn = FALSE, encoding = "UTF-8")
+```
+
+## High-level summaries
+
+Lets check the basic summaries of the 3 data sets: file size, number of lines, total number of words, minimum/maximum/mean number of words per line.
+```{r}
+files = list(dtblog, dtnews, dttwitter)
+filesize <- sapply(files, function(x){format(object.size(x), "MB")})
+lines <- sapply(files, function(x){length(x)})
+words_per_line <- sapply(files, function(x){stri_count_words(x)})
+total_words <- sapply(words_per_line, function(x){sum(x)})
+min_words <- sapply(words_per_line, function(x){min(x)})
+max_words <- sapply(words_per_line, function(x){max(x)})
+mean_words <- sapply(words_per_line, function(x){mean(x)})
+file_summary <- data.frame(
+  Type = c("blog", "news", "twitter"), 
+  FileSize = filesize, 
+  Line = lines, 
+  Words = total_words, 
+  Min_Words = min_words, 
+  Max_Words = max_words, 
+  Mean_Words = mean_words
+)
+file_summary
+```
+
+```{r}
+```
